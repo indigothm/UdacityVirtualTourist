@@ -30,14 +30,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist" id="wfl-f2-wH0">
-                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="scE-CQ-moi">
-                            <connections>
-                                <segue destination="l6O-F5-HvV" kind="show" id="14P-rQ-HJP"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="scE-CQ-moi"/>
                     </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="bzZ-7G-77x" id="MCf-bp-l56"/>
+                        <segue destination="l6O-F5-HvV" kind="show" identifier="images" id="scJ-DC-ihc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -57,13 +54,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="5Do-KP-6RB">
-                                <rect key="frame" x="0.0" y="20" width="600" height="140"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="140"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="140" id="Bdh-PJ-x1d"/>
                                 </constraints>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6pg-Su-efG">
-                                <rect key="frame" x="0.0" y="160" width="600" height="440"/>
+                                <rect key="frame" x="0.0" y="204" width="600" height="396"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="LJ2-PK-1h5">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -71,7 +68,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="imageCell" id="cFO-Jo-Mkp">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewCell" id="cFO-Jo-Mkp">
                                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -82,20 +79,36 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gdG-0j-qz1">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="AhT-vr-EGQ"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="WPI-bG-5hF"/>
+                                    <barButtonItem title="New Collection" id="4NJ-AN-Dif"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="0RM-R0-599"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="6pg-Su-efG" firstAttribute="leading" secondItem="Zlh-1G-Eco" secondAttribute="leading" id="2OH-kh-U71"/>
+                            <constraint firstItem="gdG-0j-qz1" firstAttribute="leading" secondItem="Zlh-1G-Eco" secondAttribute="leading" id="2V4-LP-6eR"/>
                             <constraint firstAttribute="trailing" secondItem="5Do-KP-6RB" secondAttribute="trailing" id="5Mn-oW-KBe"/>
                             <constraint firstItem="6pg-Su-efG" firstAttribute="top" secondItem="5Do-KP-6RB" secondAttribute="bottom" id="WOT-2H-e5q"/>
                             <constraint firstItem="Akh-vf-J3C" firstAttribute="top" secondItem="6pg-Su-efG" secondAttribute="bottom" id="cOj-uj-gye"/>
                             <constraint firstItem="5Do-KP-6RB" firstAttribute="top" secondItem="oWJ-q7-X2k" secondAttribute="bottom" id="igz-qT-nEa"/>
+                            <constraint firstAttribute="trailing" secondItem="gdG-0j-qz1" secondAttribute="trailing" id="kI9-fa-A9W"/>
+                            <constraint firstItem="Akh-vf-J3C" firstAttribute="top" secondItem="gdG-0j-qz1" secondAttribute="bottom" id="lTK-Ws-CdA"/>
                             <constraint firstAttribute="trailing" secondItem="6pg-Su-efG" secondAttribute="trailing" id="mZ3-Ju-bk4"/>
                             <constraint firstItem="5Do-KP-6RB" firstAttribute="leading" secondItem="Zlh-1G-Eco" secondAttribute="leading" id="qlK-Um-kD4"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="BS3-ri-caX"/>
                     <connections>
+                        <outlet property="collectionView" destination="6pg-Su-efG" id="xwz-SD-Ubv"/>
+                        <outlet property="flowL" destination="LJ2-PK-1h5" id="ZKB-aG-klr"/>
                         <outlet property="mapView" destination="5Do-KP-6RB" id="Fjd-O8-bsr"/>
                     </connections>
                 </viewController>
