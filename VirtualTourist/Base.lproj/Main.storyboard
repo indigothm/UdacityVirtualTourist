@@ -20,19 +20,45 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="bzZ-7G-77x">
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                             </mapView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cax-gl-KMj">
+                                <rect key="frame" x="0.0" y="555" width="600" height="45"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap Pins to Delete" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GYd-3X-fOw">
+                                        <rect key="frame" x="231" y="12" width="139" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="5Cg-2u-mH9"/>
+                                    <constraint firstItem="GYd-3X-fOw" firstAttribute="centerY" secondItem="cax-gl-KMj" secondAttribute="centerY" id="8kR-Xq-igI"/>
+                                    <constraint firstItem="GYd-3X-fOw" firstAttribute="centerX" secondItem="cax-gl-KMj" secondAttribute="centerX" id="wcw-l3-zR4"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bzZ-7G-77x" secondAttribute="bottom" id="0SX-aF-Sq6"/>
+                            <constraint firstItem="cax-gl-KMj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="2Sl-18-6Sh"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="cax-gl-KMj" secondAttribute="bottom" id="2xO-43-e0p"/>
                             <constraint firstItem="bzZ-7G-77x" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Cw3-HV-OkK"/>
                             <constraint firstItem="bzZ-7G-77x" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="GUI-pS-NVm"/>
                             <constraint firstAttribute="trailing" secondItem="bzZ-7G-77x" secondAttribute="trailing" id="lhY-Ro-Ghz"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="bzZ-7G-77x" secondAttribute="bottom" id="mKS-Rc-0LQ"/>
+                            <constraint firstAttribute="trailing" secondItem="cax-gl-KMj" secondAttribute="trailing" id="t5q-aV-YNX"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Virtual Tourist" id="wfl-f2-wH0">
-                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="scE-CQ-moi"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="scE-CQ-moi">
+                            <connections>
+                                <action selector="editDidTouch:" destination="BYZ-38-t0r" id="fN8-kR-d8e"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="deleteView" destination="cax-gl-KMj" id="b3M-pw-4ed"/>
+                        <outlet property="mapHight" destination="0SX-aF-Sq6" id="Hs5-6i-opv"/>
                         <outlet property="mapView" destination="bzZ-7G-77x" id="MCf-bp-l56"/>
                         <segue destination="l6O-F5-HvV" kind="show" identifier="images" id="scJ-DC-ihc"/>
                     </connections>

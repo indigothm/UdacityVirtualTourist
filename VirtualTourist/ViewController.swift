@@ -12,7 +12,9 @@ import MapKit
 class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var deleteView: UIView!
     
+    @IBOutlet weak var mapHight: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +26,25 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         uilgr.minimumPressDuration = 0.5
         uilgr.delegate = self
         mapView.addGestureRecognizer(uilgr)
+        deleteView.hidden = true
+        
+    }
+    
+    @IBAction func editDidTouch(sender: AnyObject) {
+        
+        if deleteView.hidden == true {
+        UIView.animateWithDuration(2.0, animations: {
+            self.deleteView.hidden = false
+            self.mapHight.constant = 45
+            
+        })
+        } else {
+            UIView.animateWithDuration(2.0, animations: {
+                self.deleteView.hidden = true
+                self.mapHight.constant = 0
+                                
+            })
+        }
         
     }
     
@@ -92,9 +113,17 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         // Dispose of any resources that can be recreated.
     }
     
-    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        print("Pressed")
-        performSegueWithIdentifier("images", sender: self)
+    func mapView(mapView: MKMapView, didSelectAnnotationView
+        view: MKAnnotationView) {
+            
+            if deleteView.hidden == true {
+                print("Pressed")
+                performSegueWithIdentifier("images", sender: self)
+            } else {
+                mapView.removeAnnotation(view.annotation! as MKAnnotation )
+                print("Deleted")
+            }
+
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
