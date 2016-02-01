@@ -8,8 +8,31 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate, NSFetchedResultsControllerDelegate {
+    
+    var fetchedResultsController: NSFetchedResultsController = {
+        
+        // Initialize Fetch Request
+        let fetchRequest = NSFetchRequest(entityName: "Location")
+        
+        // Initialize Fetched Results Controller
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            
+            managedObjectContext: (UIApplication.sharedApplication().delegate
+                as! AppDelegate).managedObjectContext,
+            
+            sectionNameKeyPath: nil,
+            
+            cacheName: nil)
+        
+        
+        return fetchedResultsController
+        
+    }()
+    
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var deleteView: UIView!
@@ -27,6 +50,19 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         uilgr.delegate = self
         mapView.addGestureRecognizer(uilgr)
         deleteView.hidden = true
+        
+        // Configure Fetched Results Controller
+        fetchedResultsController.delegate = self
+        
+        //Perform Fetch
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch {
+            let fetchError = error as NSError
+            print("\(fetchError), \(fetchError.userInfo)")
+        }
+        
+        //TODO: Write a method that will populate map with pins based on fetch output
         
     }
     
