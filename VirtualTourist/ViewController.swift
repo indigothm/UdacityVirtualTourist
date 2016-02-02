@@ -105,6 +105,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
                 //Error Handling
                 
                print("Saving Error")
+                
             }
             
             
@@ -155,7 +156,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+        
     func mapView(mapView: MKMapView, didSelectAnnotationView
         view: MKAnnotationView) {
             
@@ -163,8 +164,24 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
                 print("Pressed")
                 performSegueWithIdentifier("images", sender: self)
             } else {
-                mapView.removeAnnotation(view.annotation! as MKAnnotation )
+                
+                let delPin = view.annotation! as MKAnnotation
+                
+                for pin in pins {
+                    if (pin.longitude == delPin.coordinate.longitude) && (pin.latitude == delPin.coordinate.latitude) {
+                        sharedContext.deleteObject(pin)
+                        try! sharedContext.save()
+                        print("Pin in Deleted")
+                    } else {
+                        print("Deleting Error")
+                    }
+                }
+
+                
+                mapView.removeAnnotation(delPin)
                 print("Deleted")
+                
+                
             }
 
     }
