@@ -15,6 +15,7 @@ import CoreData
 extension Photo {
 
     @NSManaged var url: String?
+    @NSManaged var createdAt: NSDate?
     @NSManaged var location: Location?
 
 }

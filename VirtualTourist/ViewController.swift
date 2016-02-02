@@ -10,59 +10,46 @@ import UIKit
 import MapKit
 import CoreData
 
-class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate, NSFetchedResultsControllerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
     
-    var fetchedResultsController: NSFetchedResultsController = {
-        
-        // Initialize Fetch Request
-        let fetchRequest = NSFetchRequest(entityName: "Location")
-        
-        // Initialize Fetched Results Controller
-        
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-            
-            managedObjectContext: (UIApplication.sharedApplication().delegate
-                as! AppDelegate).managedObjectContext,
-            
-            sectionNameKeyPath: nil,
-            
-            cacheName: nil)
-        
-        
-        return fetchedResultsController
-        
-    }()
-    
+    var sharedContext: NSManagedObjectContext {
+        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        return delegate.managedObjectContext
+    }
 
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var deleteView: UIView!
     
     @IBOutlet weak var mapHight: NSLayoutConstraint!
     
+    var pins = [Location]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         mapView.delegate = self
-        
         //Long Press guesture recognizer
         let uilgr = UILongPressGestureRecognizer(target: self, action: "addAnnotation:")
         uilgr.minimumPressDuration = 0.5
         uilgr.delegate = self
         mapView.addGestureRecognizer(uilgr)
         deleteView.hidden = true
-        
-        // Configure Fetched Results Controller
-        fetchedResultsController.delegate = self
-        
-        //Perform Fetch
-        do {
-            try self.fetchedResultsController.performFetch()
-        } catch {
-            let fetchError = error as NSError
-            print("\(fetchError), \(fetchError.userInfo)")
-        }
+
         
         //TODO: Write a method that will populate map with pins based on fetch output
+        pins = fetchAllPins()
+        
+        print("Number of pins stored")
+        print(pins.count)
+        
+        for pin in pins {
+            print(pin.valueForKey("latitude"))
+            let annotation = MKPointAnnotation()
+            annotation.coordinate.latitude = pin.valueForKey("latitude") as! Double
+            annotation.coordinate.longitude = pin.valueForKey("longitude") as! Double
+            mapView.addAnnotation(annotation)
+ 
+        }
         
     }
     
@@ -84,6 +71,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         
     }
     
+    
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         
          if gestureRecognizer.state == UIGestureRecognizerState.Began {
@@ -97,9 +85,28 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             //Add new annotation
             mapView.addAnnotation(annotation)
             
+            let entityDescription =
+            NSEntityDescription.entityForName("Location",
+                inManagedObjectContext: sharedContext)
             
-            print(newCoordinates)
-            print("LongPress")
+            let pin = Location(entity: entityDescription!,
+                insertIntoManagedObjectContext: sharedContext)
+            
+            pin.latitude = newCoordinates.latitude as Double
+            pin.longitude = newCoordinates.longitude as Double
+            pin.createdAt = NSDate()
+            
+            do {
+                
+                try sharedContext.save()
+                
+            } catch {
+                
+                //Error Handling
+                
+               print("Saving Error")
+            }
+            
             
          }
     }
@@ -167,7 +174,23 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         backItem.title = "OK"
         navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
     }
+    
 
+    func fetchAllPins() -> [Location] {
+        
+        // Create the fetch request
+        let fetchRequest = NSFetchRequest(entityName: "Location")
+        
+        // Execute the Fetch Request
+        do {
+            return try sharedContext.executeFetchRequest(fetchRequest) as! [Location]
+        } catch let error as NSError {
+            print("Error in fetchAllPins(): \(error)")
+            return [Location]()
+        }
+        
+        
+    }
 
 }
 
