@@ -15,8 +15,17 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var flowL: UICollectionViewFlowLayout!
     
+    var pin: MKAnnotation!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        mapView.addAnnotation(pin)
+        
+        let regionRadius: CLLocationDistance = 200
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate,
+            regionRadius * 2.0, regionRadius * 2.0)
+        mapView.setRegion(coordinateRegion, animated: true)
 
         // Do any additional setup after loading the view.
                 
@@ -31,6 +40,18 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         flowL.minimumLineSpacing = space
         flowL.sectionInset = UIEdgeInsets(top: space, left: space, bottom: space, right: space)
         flowL.itemSize = CGSizeMake(dimension, dimension)
+        
+        let lat = pin.coordinate.longitude as Double
+        let long = pin.coordinate.latitude as Double
+        
+        FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10, lat, lat+10], completionHandler: { output in
+            
+                print ("TEST OUTPUT TO BE SAVED IN HERE")
+                print (output)
+            
+                //TODO: Create an array of Photo objects and populate collection view with them
+            
+        })
     }
 
     override func didReceiveMemoryWarning() {

@@ -12,6 +12,8 @@ import CoreData
 
 class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
     
+    var selectedAnnotation: MKAnnotation!
+    
     var sharedContext: NSManagedObjectContext {
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         return delegate.managedObjectContext
@@ -162,7 +164,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             
             if deleteView.hidden == true {
                 print("Pressed")
+                selectedAnnotation = view.annotation
                 performSegueWithIdentifier("images", sender: self)
+               
             } else {
                 
                 let delPin = view.annotation! as MKAnnotation
@@ -190,6 +194,14 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         let backItem = UIBarButtonItem()
         backItem.title = "OK"
         navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
+        
+        if segue.identifier == "images" {
+            
+            let controller = segue.destinationViewController as! ImageViewController
+            controller.pin = selectedAnnotation
+            print(selectedAnnotation)
+            
+        }
     }
     
 
