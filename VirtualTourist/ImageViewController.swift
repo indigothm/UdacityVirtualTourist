@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import SwiftyJSON
 
 class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
@@ -19,6 +20,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var photoArray: JSON!
     
         mapView.addAnnotation(pin)
         
@@ -48,6 +51,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
             
                 print ("TEST OUTPUT TO BE SAVED IN HERE")
                 print (output)
+            
+                photoArray = output
             
                 //TODO: Create an array of Photo objects and populate collection view with them
             

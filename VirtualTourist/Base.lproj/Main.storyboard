@@ -94,14 +94,34 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewCell" id="cFO-Jo-Mkp">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewCell" id="cFO-Jo-Mkp" customClass="ImageCollectionViewCell" customModule="VirtualTourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g3A-wm-kkQ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                                </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="e5N-8F-g9A">
+                                                    <rect key="frame" x="40" y="40" width="20" height="20"/>
+                                                </activityIndicatorView>
+                                            </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="g3A-wm-kkQ" secondAttribute="bottom" id="MBI-8h-zKu"/>
+                                            <constraint firstItem="g3A-wm-kkQ" firstAttribute="top" secondItem="cFO-Jo-Mkp" secondAttribute="top" id="Tjv-SH-Iud"/>
+                                            <constraint firstItem="e5N-8F-g9A" firstAttribute="centerY" secondItem="cFO-Jo-Mkp" secondAttribute="centerY" id="ZnD-8b-yE5"/>
+                                            <constraint firstItem="e5N-8F-g9A" firstAttribute="centerX" secondItem="cFO-Jo-Mkp" secondAttribute="centerX" id="Zzp-cL-nrJ"/>
+                                            <constraint firstAttribute="trailing" secondItem="g3A-wm-kkQ" secondAttribute="trailing" id="elJ-vr-aZ0"/>
+                                            <constraint firstItem="g3A-wm-kkQ" firstAttribute="leading" secondItem="cFO-Jo-Mkp" secondAttribute="leading" id="nl2-9D-zyl"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="activityIndicator" destination="e5N-8F-g9A" id="iWn-t7-Zwq"/>
+                                            <outlet property="image" destination="g3A-wm-kkQ" id="mvn-dW-4Ik"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
