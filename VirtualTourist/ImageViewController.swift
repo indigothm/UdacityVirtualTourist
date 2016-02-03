@@ -17,11 +17,11 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     @IBOutlet weak var flowL: UICollectionViewFlowLayout!
     
     var pin: MKAnnotation!
+    var photoArray: JSON!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var photoArray: JSON!
     
         mapView.addAnnotation(pin)
         
@@ -52,7 +52,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 print ("TEST OUTPUT TO BE SAVED IN HERE")
                 print (output)
             
-                photoArray = output
+                self.photoArray = output
+                self.collectionView.reloadData()
             
                 //TODO: Create an array of Photo objects and populate collection view with them
             
@@ -65,7 +66,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 12
+        return 9
     }
     
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
@@ -73,15 +74,35 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionViewCell", forIndexPath:indexPath) as! ImageCollectionViewCell
         
-        ImageLoader.sharedLoader.imageForUrl("https://www.petfinder.com/wp-content/uploads/2012/11/140272627-grooming-needs-senior-cat-632x475.jpg", completionHandler:{(image: UIImage?, url: String) in
-            cell.image.image = image!
+        if let photo = photoArray {
+            
+            print("PHOTO")
+            print(photo[indexPath.row])
+        
+        let farm:String = photo["photos"]["photo"][indexPath.row]["farm"].stringValue
+        let server:String = photo["photos"]["photo"][indexPath.row]["server"].stringValue
+        let photoID:String = photo["photos"]["photo"][indexPath.row]["id"].stringValue
+        let secret:String = photo["photos"]["photo"][indexPath.row]["secret"].stringValue
+        
+        let imageString:String = "https://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_n.jpg/"
+            print("THE IMAGE")
+            print(imageString)
+            
+        ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
+            if let imageD = image {
+            cell.image.image = imageD
+            }
         })
         
-        cell.backgroundColor = UIColor.blueColor()
+        }
+        
+        cell.backgroundColor = UIColor.grayColor()
         
         return cell
         
     }
+    
+
     
     func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
         
