@@ -71,7 +71,11 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
        
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionViewCell", forIndexPath:indexPath)
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionViewCell", forIndexPath:indexPath) as! ImageCollectionViewCell
+        
+        ImageLoader.sharedLoader.imageForUrl("https://www.petfinder.com/wp-content/uploads/2012/11/140272627-grooming-needs-senior-cat-632x475.jpg", completionHandler:{(image: UIImage?, url: String) in
+            cell.image.image = image!
+        })
         
         cell.backgroundColor = UIColor.blueColor()
         
