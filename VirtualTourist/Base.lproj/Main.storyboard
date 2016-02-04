@@ -86,7 +86,7 @@
                                 </constraints>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="6pg-Su-efG">
-                                <rect key="frame" x="0.0" y="204" width="600" height="396"/>
+                                <rect key="frame" x="0.0" y="204" width="600" height="352"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="LJ2-PK-1h5">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -101,12 +101,12 @@
                                             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g3A-wm-kkQ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                                                </imageView>
                                                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="e5N-8F-g9A">
                                                     <rect key="frame" x="40" y="40" width="20" height="20"/>
                                                 </activityIndicatorView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g3A-wm-kkQ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                                </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -132,7 +132,11 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="WPI-bG-5hF"/>
-                                    <barButtonItem title="New Collection" id="4NJ-AN-Dif"/>
+                                    <barButtonItem title="New Collection" id="4NJ-AN-Dif">
+                                        <connections>
+                                            <action selector="newCollectionDidTouch:" destination="l6O-F5-HvV" id="53j-aP-dsW"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="0RM-R0-599"/>
                                 </items>
                             </toolbar>
@@ -143,7 +147,7 @@
                             <constraint firstItem="gdG-0j-qz1" firstAttribute="leading" secondItem="Zlh-1G-Eco" secondAttribute="leading" id="2V4-LP-6eR"/>
                             <constraint firstAttribute="trailing" secondItem="5Do-KP-6RB" secondAttribute="trailing" id="5Mn-oW-KBe"/>
                             <constraint firstItem="6pg-Su-efG" firstAttribute="top" secondItem="5Do-KP-6RB" secondAttribute="bottom" id="WOT-2H-e5q"/>
-                            <constraint firstItem="Akh-vf-J3C" firstAttribute="top" secondItem="6pg-Su-efG" secondAttribute="bottom" id="cOj-uj-gye"/>
+                            <constraint firstItem="Akh-vf-J3C" firstAttribute="top" secondItem="6pg-Su-efG" secondAttribute="bottom" constant="44" id="cOj-uj-gye"/>
                             <constraint firstItem="5Do-KP-6RB" firstAttribute="top" secondItem="oWJ-q7-X2k" secondAttribute="bottom" id="igz-qT-nEa"/>
                             <constraint firstAttribute="trailing" secondItem="gdG-0j-qz1" secondAttribute="trailing" id="kI9-fa-A9W"/>
                             <constraint firstItem="Akh-vf-J3C" firstAttribute="top" secondItem="gdG-0j-qz1" secondAttribute="bottom" id="lTK-Ws-CdA"/>
@@ -156,6 +160,7 @@
                         <outlet property="collectionView" destination="6pg-Su-efG" id="xwz-SD-Ubv"/>
                         <outlet property="flowL" destination="LJ2-PK-1h5" id="ZKB-aG-klr"/>
                         <outlet property="mapView" destination="5Do-KP-6RB" id="Fjd-O8-bsr"/>
+                        <outlet property="newCollectionButtonOutlet" destination="4NJ-AN-Dif" id="SMk-U7-JNQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GZy-TS-ugK" userLabel="First Responder" sceneMemberID="firstResponder"/>

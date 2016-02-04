@@ -35,6 +35,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.whiteColor()
+        collectionView.allowsMultipleSelection = true
         
         let space: CGFloat = (view.frame.size.width / 64.0)
         let dimension = (view.frame.size.width  / 3.2)
@@ -47,7 +48,12 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         let lat = pin.coordinate.longitude as Double
         let long = pin.coordinate.latitude as Double
         
-        FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10, lat, lat+10], completionHandler: { output in
+        print("lat")
+        print(lat)
+        print("long")
+        print(long)
+        
+        FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10.0, lat, lat+10.0], completionHandler: { output in
             
                 print ("TEST OUTPUT TO BE SAVED IN HERE")
                 print (output)
@@ -65,14 +71,18 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         // Dispose of any resources that can be recreated.
     }
     
+    var numberOfItems: Int = 21
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 9
+        return numberOfItems
     }
     
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CollectionViewCell", forIndexPath:indexPath) as! ImageCollectionViewCell
+        
+        cell.activityIndicator.startAnimating()
         
         if let photo = photoArray {
             
@@ -91,6 +101,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
             if let imageD = image {
             cell.image.image = imageD
+                cell.activityIndicator.stopAnimating()
+                cell.activityIndicator.hidden = true
             }
         })
         
@@ -104,20 +116,93 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
 
     
-    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let cell = collectionView.cellForItemAtIndexPath(indexPath)
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionViewCell
         
-    cell!.backgroundColor = UIColor.blueColor().colorWithAlphaComponent(0.5)
+        cell.image.alpha = 0.5
+        newCollectionButtonOutlet.title = "Remove Selected Pictures"
+        
+        cellsToDelele.append(indexPath)
+        
         
     }
     
-    func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = collectionView.cellForItemAtIndexPath(indexPath)
-        cell!.backgroundColor = UIColor.blueColor()
+    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ImageCollectionViewCell
+        
+        cell.image.alpha = 1.0
+        
+        if cellsToDelele.isEmpty != true {
+            for (index, value) in cellsToDelele.enumerate() {
+                if value == indexPath {
+                    cellsToDelele.removeAtIndex(index)
+                    
+                    if cellsToDelele.isEmpty {
+                        newCollectionButtonOutlet.title = "New Collection"
+                    }
+                    
+                }
+            }
+        }
+        
+        
+        
     }
     
+    var cellsToDelele = [NSIndexPath]()
+
     
+    @IBAction func newCollectionDidTouch(sender: AnyObject) {
+        
+        if newCollectionButtonOutlet.title == "Remove Selected Pictures" {
+        
+            if cellsToDelele.isEmpty != true {
+                
+                numberOfItems = numberOfItems - cellsToDelele.count
+                collectionView.deleteItemsAtIndexPaths(cellsToDelele)
+                newCollectionButtonOutlet.title = "New Collection"
+                cellsToDelele.removeAll()
+                
+            }
+            
+        } else {
+        
+        let lat = pin.coordinate.longitude as Double
+        let long = pin.coordinate.latitude as Double
+        numberOfItems = 21
+        
+        FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10.0, lat, lat+10.0], completionHandler: { output in
+            
+            
+            for cell in self.collectionView.visibleCells() as! [ImageCollectionViewCell] {
+                
+                cell.activityIndicator.hidden = false
+                cell.activityIndicator.startAnimating()
+                
+                //let index = self.collectionView.indexPathForCell(cell)
+                //let arrayInd = [index!]
+                
+                //self.collectionView.deleteItemsAtIndexPaths(arrayInd)
+                //self.numberOfItems = self.numberOfItems - 1
+                
+                
+            }
+            
+            
+            self.photoArray = output
+            self.collectionView.reloadData()
+
+            
+        })
+            
+        }
+
+        
+    }
+    
+    @IBOutlet weak var newCollectionButtonOutlet: UIBarButtonItem!
     
     /*
     // MARK: - Navigation
