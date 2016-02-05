@@ -18,6 +18,20 @@ class Photo: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
+    struct Keys {
+        static let URL = "url"
+        static let createdAt = "createdAt"
+        static let location = "location"
+    }
+    
+    init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
+        let entity = NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)
+        super.init(entity: entity!, insertIntoManagedObjectContext: context)
+        
+        url = dictionary[Keys.URL] as! String
+        createdAt = dictionary[Keys.createdAt] as! NSDate
+        location = dictionary[Keys.location] as? Location
+    }
     
     
 }

@@ -9,8 +9,30 @@
 import UIKit
 import MapKit
 import SwiftyJSON
+import CoreData
 
-class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, NSFetchedResultsControllerDelegate {
+    
+    var sharedContext: NSManagedObjectContext {
+        return (UIApplication.sharedApplication().delegate
+            as! AppDelegate).managedObjectContext
+    }
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "url", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "location == %@", self.pin);
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            managedObjectContext: self.sharedContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return fetchedResultsController
+        
+    }()
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var mapView: MKMapView!
@@ -25,7 +47,12 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
         super.viewDidLoad()
         
         
-        mapView.addAnnotation(pin)
+        
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {}
         
         let regionRadius: CLLocationDistance = 200
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate,
@@ -68,6 +95,15 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
         })
     }
     
+    override func viewWillAppear(animated: Bool) {
+        
+        print("pin value")
+        
+        print(pin)
+        
+        mapView.addAnnotation(pin)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -78,6 +114,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return numberOfItems
     }
+
     
     // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -99,6 +136,26 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
         let imageString:String = "https://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_n.jpg/"
             print("THE IMAGE")
             print(imageString)
+            
+        let params = [
+                "url": imageString,
+                "createdAt": NSDate(),
+                "location": self.pin
+            ]
+            
+        let photoCore = Photo(dictionary: params, context: sharedContext)
+            
+            do {
+                // Save Record
+                
+                print("SAVING")
+                try sharedContext.save()
+                
+            } catch {
+                let saveError = error as NSError
+                print("\(saveError), \(saveError.userInfo)")
+            
+            }
             
             
         ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in

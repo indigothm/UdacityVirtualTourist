@@ -196,6 +196,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         if segue.identifier == "images" {
             
             let controller = segue.destinationViewController as! ImageViewController
+            print("SELECTED ANNOTATION")
             controller.pin = selectedAnnotation
             print(selectedAnnotation)
             
