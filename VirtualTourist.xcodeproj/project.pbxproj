@@ -80,11 +80,11 @@
 			isa = PBXGroup;
 			children = (
 				3FF0DF931C6275FE00366FD4 /* ImageLoader.swift */,
-				3F75A7B21C5FF91800DE4571 /* Location+CoreDataProperties.swift */,
 				3FF0DF8D1C61320A00366FD4 /* FlickrAPIHelper.swift */,
+				3F75A7B21C5FF91800DE4571 /* Location+CoreDataProperties.swift */,
 				3F75A7B31C5FF91800DE4571 /* Location.swift */,
-				3F75A7B41C5FF91800DE4571 /* Photo+CoreDataProperties.swift */,
 				3F75A7B51C5FF91800DE4571 /* Photo.swift */,
+				3F75A7B41C5FF91800DE4571 /* Photo+CoreDataProperties.swift */,
 				3F66E1A61C5D3B2600939593 /* ImageViewController.swift */,
 				3FF0DF911C6267F500366FD4 /* ImageCollectionViewCell.swift */,
 				3F66E1911C5D37F700939593 /* AppDelegate.swift */,

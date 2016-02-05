@@ -13,6 +13,7 @@ import CoreData
 class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
     
     var selectedAnnotation: MKAnnotation!
+    var coreDataSel: Location!
     
     var sharedContext: NSManagedObjectContext {
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -165,6 +166,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             if deleteView.hidden == true {
                 print("Pressed")
                 selectedAnnotation = view.annotation
+                //I need to assign the Location object to CoreDataPass variable
                 performSegueWithIdentifier("images", sender: self)
                
             } else {

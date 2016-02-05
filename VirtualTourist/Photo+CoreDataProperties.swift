@@ -13,9 +13,18 @@ import Foundation
 import CoreData
 
 extension Photo {
+    
+    struct Keys {
+        static let url = "url"
+        static let createdAt = "createdAt"
+        static let location = "location"
+    }
 
-    @NSManaged var url: String?
-    @NSManaged var createdAt: NSDate?
+    @NSManaged var url: String
+    @NSManaged var createdAt: NSDate
     @NSManaged var location: Location?
+    
+    
+    
 
 }

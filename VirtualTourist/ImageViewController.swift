@@ -9,8 +9,29 @@
 import UIKit
 import MapKit
 import SwiftyJSON
+import CoreData
 
-class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+class ImageViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate,UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+    
+    var sharedContext: NSManagedObjectContext {
+        return (UIApplication.sharedApplication().delegate
+            as! AppDelegate).managedObjectContext
+    }
+    
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+            managedObjectContext: self.sharedContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        return fetchedResultsController
+        
+    }()
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var mapView: MKMapView!
@@ -18,6 +39,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
     
     var pin: MKAnnotation!
     var photoArray: JSON!
+    
+    var setNumber = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +59,14 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.whiteColor()
         collectionView.allowsMultipleSelection = true
+        
+        // Step 2: invoke fetchedResultsController.performFetch(nil) here
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {}
+        
+        // Step 9: set the fetchedResultsController.delegate = self
+        fetchedResultsController.delegate = self
         
         let space: CGFloat = (view.frame.size.width / 64.0)
         let dimension = (view.frame.size.width  / 3.2)
@@ -64,6 +95,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 //TODO: Create an array of Photo objects and populate collection view with them
             
         })
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -89,14 +121,23 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
             print("PHOTO")
             print(photo[indexPath.row])
         
-        let farm:String = photo["photos"]["photo"][indexPath.row]["farm"].stringValue
-        let server:String = photo["photos"]["photo"][indexPath.row]["server"].stringValue
-        let photoID:String = photo["photos"]["photo"][indexPath.row]["id"].stringValue
-        let secret:String = photo["photos"]["photo"][indexPath.row]["secret"].stringValue
+        let farm:String = photo["photos"]["photo"][indexPath.row + setNumber]["farm"].stringValue
+        let server:String = photo["photos"]["photo"][indexPath.row + setNumber]["server"].stringValue
+        let photoID:String = photo["photos"]["photo"][indexPath.row + setNumber]["id"].stringValue
+        let secret:String = photo["photos"]["photo"][indexPath.row + setNumber]["secret"].stringValue
         
         let imageString:String = "https://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_n.jpg/"
             print("THE IMAGE")
             print(imageString)
+            
+        let params = [
+            "url": imageString,
+            "createdAt": NSDate(),
+            ]
+            
+        let image = Photo(dictionary: params, context: self.sharedContext)
+        // image.location = nil
+           // fetchedResultsController.o
             
         ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
             if let imageD = image {
@@ -190,7 +231,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate, UICollectionView
                 
             }
             
-            
+            self.setNumber = self.setNumber + 21
             self.photoArray = output
             self.collectionView.reloadData()
 
