@@ -40,6 +40,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
     
     var pin: Location!
     var photoArray: JSON!
+    var photoCore: [Photo]!
     
     var setNumber = 0
     
@@ -82,6 +83,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
         print("long")
         print(long)
         
+        if pin.photos.isEmpty {
+        
         FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10.0, lat, lat+10.0], completionHandler: { output in
             
             print ("TEST OUTPUT TO BE SAVED IN HERE")
@@ -89,10 +92,14 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
             
             self.photoArray = output
             self.collectionView.reloadData()
-            
-            //TODO: Create an array of Photo objects and populate collection view with them
-            
+        
+        
         })
+    
+        } else {
+            photoCore = pin.photos
+        }
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -123,48 +130,77 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
         
         cell.activityIndicator.startAnimating()
         
-        if let photo = photoArray {
-            
-            print("PHOTO")
-            print(photo[indexPath.row])
         
-        let farm:String = photo["photos"]["photo"][indexPath.row + setNumber]["farm"].stringValue
-        let server:String = photo["photos"]["photo"][indexPath.row + setNumber]["server"].stringValue
-        let photoID:String = photo["photos"]["photo"][indexPath.row + setNumber]["id"].stringValue
-        let secret:String = photo["photos"]["photo"][indexPath.row + setNumber]["secret"].stringValue
+            if pin.photos.count <  numberOfItems {
         
-        let imageString:String = "https://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_n.jpg/"
-            print("THE IMAGE")
-            print(imageString)
+                if let photo = photoArray {
             
-        let params = [
-                "url": imageString,
-                "createdAt": NSDate(),
-                "location": self.pin
-            ]
+                    print("PHOTO")
+                    print(photo[indexPath.row])
+                    
+                    let farm:String = photo["photos"]["photo"][indexPath.row + setNumber]["farm"].stringValue
+                    let server:String = photo["photos"]["photo"][indexPath.row + setNumber]["server"].stringValue
+                    let photoID:String = photo["photos"]["photo"][indexPath.row + setNumber]["id"].stringValue
+                    let secret:String = photo["photos"]["photo"][indexPath.row + setNumber]["secret"].stringValue
+        
+                    let imageString:String = "https://farm\(farm).staticflickr.com/\(server)/\(photoID)_\(secret)_n.jpg/"
+                    print("THE IMAGE")
+                    print(imageString)
+                    
+                    let params = [
+                        "url": imageString,
+                        "createdAt": NSDate(),
+                        "location": self.pin
+                    ]
             
-        let photoCore = Photo(dictionary: params, context: sharedContext)
+                    _ = Photo(dictionary: params, context: sharedContext)
             
-            do {
-                // Save Record
+                    do {
+                        // Save Record
                 
-                print("SAVING")
-                try sharedContext.save()
-                
-            } catch {
-                let saveError = error as NSError
-                print("\(saveError), \(saveError.userInfo)")
+                        print("SAVING")
+                        try sharedContext.save()
+                        
+                    } catch {
+                        let saveError = error as NSError
+                        print("\(saveError), \(saveError.userInfo)")
+                        
+                    }
             
+            
+            
+                    ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
+                        if let imageD = image {
+                            cell.image.image = imageD
+                            cell.activityIndicator.stopAnimating()
+                            cell.activityIndicator.hidden = true
+                        }
+                    })
+        
+                    }
+            
+        } else {
+            
+            if let photos = photoCore {
+                
+                print("Photocore")
+                
+                print(photos)
+            
+            let url = photos[indexPath.row].valueForKey("url") as! String
+            print("URL")
+            print(url)
+            
+            ImageLoader.sharedLoader.imageForUrl(url, completionHandler:{(image: UIImage?, url: String) in
+                if let imageD = image {
+                    cell.image.image = imageD
+                    cell.activityIndicator.stopAnimating()
+                    cell.activityIndicator.hidden = true
+                }
+            })
+                
             }
             
-            
-        ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
-            if let imageD = image {
-            cell.image.image = imageD
-                cell.activityIndicator.stopAnimating()
-                cell.activityIndicator.hidden = true
-            }
-        })
         
         }
         
@@ -228,6 +264,8 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
             }
             
         } else {
+            
+        pin.photos.removeAll()
         
         let lat = pin.coordinate.longitude as Double
         let long = pin.coordinate.latitude as Double
@@ -240,12 +278,7 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
                 
                 cell.activityIndicator.hidden = false
                 cell.activityIndicator.startAnimating()
-                
-                //let index = self.collectionView.indexPathForCell(cell)
-                //let arrayInd = [index!]
-                
-                //self.collectionView.deleteItemsAtIndexPaths(arrayInd)
-                //self.numberOfItems = self.numberOfItems - 1
+
                 
                 
             }
@@ -264,14 +297,5 @@ class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewD
     
     @IBOutlet weak var newCollectionButtonOutlet: UIBarButtonItem!
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
