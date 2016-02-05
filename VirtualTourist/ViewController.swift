@@ -12,8 +12,7 @@ import CoreData
 
 class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate {
     
-    var selectedAnnotation: MKAnnotation!
-    var coreDataSel: Location!
+    var selectedAnnotation: Location!
     
     var sharedContext: NSManagedObjectContext {
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -46,11 +45,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         print(pins.count)
         
         for pin in pins {
-            print(pin.valueForKey("latitude"))
-            let annotation = MKPointAnnotation()
-            annotation.coordinate.latitude = pin.valueForKey("latitude") as! Double
-            annotation.coordinate.longitude = pin.valueForKey("longitude") as! Double
-            mapView.addAnnotation(annotation)
+
+            mapView.addAnnotation(pin)
  
         }
         
@@ -82,23 +78,23 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             //Getting location from the map
             let touchPoint = gestureRecognizer.locationInView(mapView)
             let newCoordinates = mapView.convertPoint(touchPoint, toCoordinateFromView: mapView)
-            //Creating a generic pin
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = newCoordinates
+
+            
+            //Create Pin
+            
+            let dictD = [
+                "latitude": newCoordinates.latitude as Double,
+                "longitude":  newCoordinates.longitude as Double,
+                "createdAt": NSDate()
+            ]
+            
+            let pin = Location(dictionary: dictD, context: sharedContext)
+
+            
             //Add new annotation
-            mapView.addAnnotation(annotation)
+            mapView.addAnnotation(pin)
             
-            let entityDescription =
-            NSEntityDescription.entityForName("Location",
-                inManagedObjectContext: sharedContext)
-            
-            let pin = Location(entity: entityDescription!,
-                insertIntoManagedObjectContext: sharedContext)
-            
-            pin.latitude = newCoordinates.latitude as Double
-            pin.longitude = newCoordinates.longitude as Double
-            pin.createdAt = NSDate()
-            
+         
             do {
                 
                 try sharedContext.save()
@@ -165,7 +161,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             
             if deleteView.hidden == true {
                 print("Pressed")
-                selectedAnnotation = view.annotation
+                selectedAnnotation = view.annotation as! Location
                 //I need to assign the Location object to CoreDataPass variable
                 performSegueWithIdentifier("images", sender: self)
                

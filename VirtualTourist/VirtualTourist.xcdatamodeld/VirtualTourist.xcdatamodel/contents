@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15C50" minimumToolsVersion="Automatic">
-    <entity name="Location" representedClassName=".Location" syncable="YES">
-        <attribute name="createdAt" optional="YES" attributeType="Date" syncable="YES"/>
+    <entity name="Location" representedClassName="Location" syncable="YES">
+        <attribute name="createdAt" attributeType="Date" syncable="YES"/>
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <relationship name="photos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Photo" inverseName="location" inverseEntity="Photo" syncable="YES"/>

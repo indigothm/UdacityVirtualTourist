@@ -9,35 +9,14 @@
 import UIKit
 import MapKit
 import SwiftyJSON
-import CoreData
 
-class ImageViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate,UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+class ImageViewController: UIViewController, MKMapViewDelegate,UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
-    var sharedContext: NSManagedObjectContext {
-        return (UIApplication.sharedApplication().delegate
-            as! AppDelegate).managedObjectContext
-    }
-    
-    lazy var fetchedResultsController: NSFetchedResultsController = {
-        
-        let fetchRequest = NSFetchRequest(entityName: "Photo")
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
-            managedObjectContext: self.sharedContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        return fetchedResultsController
-        
-    }()
-
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var flowL: UICollectionViewFlowLayout!
     
-    var pin: MKAnnotation!
+    var pin: Location!
     var photoArray: JSON!
     
     var setNumber = 0
@@ -45,28 +24,20 @@ class ImageViewController: UIViewController, MKMapViewDelegate, NSFetchedResults
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
+        
         mapView.addAnnotation(pin)
         
         let regionRadius: CLLocationDistance = 200
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate,
             regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
-
+        
         // Do any additional setup after loading the view.
-                
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.whiteColor()
         collectionView.allowsMultipleSelection = true
-        
-        // Step 2: invoke fetchedResultsController.performFetch(nil) here
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {}
-        
-        // Step 9: set the fetchedResultsController.delegate = self
-        fetchedResultsController.delegate = self
         
         let space: CGFloat = (view.frame.size.width / 64.0)
         let dimension = (view.frame.size.width  / 3.2)
@@ -86,18 +57,17 @@ class ImageViewController: UIViewController, MKMapViewDelegate, NSFetchedResults
         
         FlickrAPIHelper.sharedInstance.getPhotos([long, long + 10.0, lat, lat+10.0], completionHandler: { output in
             
-                print ("TEST OUTPUT TO BE SAVED IN HERE")
-                print (output)
+            print ("TEST OUTPUT TO BE SAVED IN HERE")
+            print (output)
             
-                self.photoArray = output
-                self.collectionView.reloadData()
+            self.photoArray = output
+            self.collectionView.reloadData()
             
-                //TODO: Create an array of Photo objects and populate collection view with them
+            //TODO: Create an array of Photo objects and populate collection view with them
             
         })
-        
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -130,14 +100,6 @@ class ImageViewController: UIViewController, MKMapViewDelegate, NSFetchedResults
             print("THE IMAGE")
             print(imageString)
             
-        let params = [
-            "url": imageString,
-            "createdAt": NSDate(),
-            ]
-            
-        let image = Photo(dictionary: params, context: self.sharedContext)
-        // image.location = nil
-           // fetchedResultsController.o
             
         ImageLoader.sharedLoader.imageForUrl(imageString, completionHandler:{(image: UIImage?, url: String) in
             if let imageD = image {
